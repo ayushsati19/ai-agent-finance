@@ -1,0 +1,336 @@
+Index: financial_agent.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from phi.agent import Agent\r\nfrom phi.model.groq import Groq\r\nfrom phi.tools.yfinance import YFinanceTools\r\nfrom phi.tools.duckduckgo import DuckDuckGo\r\nfrom dotenv import load_dotenv\r\nimport os\r\nimport getpass\r\n\r\nload_dotenv('.env',override=True)\r\nif 'GROQ_API_KEY' not in os.environ:\r\n    os.environ['GROQ_API_KEY']=getpass.getpass('GROQ_API_KEY')\r\n\r\n\r\nweb_search_agent=Agent(\r\n    name='web_search_agent',\r\n    role='search the web for the reliable financial data which can be used to get useful insight',\r\n    model=Groq(id='llama-3.3-70b-versatile'),\r\n    tools=[DuckDuckGo()],\r\n    instructions=[\r\n        'Focus on high-quality, trusted financial news sources (e.g., Bloomberg, Reuters, Yahoo Finance, etc.).',\r\n        'Ensure all information is up-to-date, relevant, and fact-checked.',\r\n        'Summarize findings in a structured format, with key insights in bullet points.',\r\n        'Prioritize sources that provide detailed financial data (stock prices, analyst ratings, market trends, etc.).',\r\n        'Always include source links and the date of publication.'\r\n    ],\r\n    show_tool_calls=True,\r\n    markdown=True,\r\n)\r\n## Financial agent\r\nfinance_agent=Agent(\r\n    name='finance_ai_agent',\r\n    model=Groq(id='llama-3.3-70b-versatile'),\r\n    tools=[YFinanceTools(stock_price=True, analyst_recommendations=True,\r\n                         stock_fundamentals=True,\r\n                         company_news=True),\r\n       ],\r\n    instructions=[\r\n        'Present financial data in a structured table format (e.g., stock prices, analyst ratings, news summaries).',\r\n        'Focus on high-quality, accurate financial data (e.g., stock performance, analyst recommendations, earnings reports).',\r\n        'Provide a summary of key financial trends or insights based on the data.',\r\n        'Offer actionable recommendations based on financial data (e.g., \"Buy\", \"Sell\", \"Hold\").',\r\n        'Ensure all data is up-to-date, referencing the most recent financial reports and news articles.',\r\n        'Cross-check the sources of data for consistency and accuracy.',\r\n    ],\r\n    show_tools_calls=True,\r\n    markdown=True,\r\n)\r\n\r\nmulti_ai_agent=Agent(\r\n    team=[web_search_agent,finance_agent],\r\n    model=Groq(id='llama-3.3-70b-versatile'),\r\n    instructions=[\r\n        'Ensure seamless collaboration between the web search agent and finance agent to provide a comprehensive response.',\r\n        'Search for the latest financial data, news, and analyst recommendations, and organize them in clear, structured tables.',\r\n        'Summarize the findings in a concise manner, highlighting key insights and actionable recommendations.',\r\n        'When providing stock data, ensure that you include stock price, analyst recommendations, and relevant market news.',\r\n        'Use tables to present financial data clearly, and always include source links and the date of publication.',\r\n        'When possible, cross-reference data from both agents to ensure consistency and reliability.',\r\n        'Provide actionable financial advice based on the combined data (e.g., Buy, Sell, Hold).',\r\n        'Display the results in markdown format for readability and clarity.',\r\n    ],\r\n    show_tools_calls=True,\r\n    markdown=True,\r\n)\r\n\r\n# Ask the user for the stock they want to analyze\r\nstock_name = input(\"Enter the stock ticker symbol you want to analyze (e.g., TSLA for Tesla): \")\r\n\r\n# Use the inputted stock name in the agent's response\r\nmulti_ai_agent.print_response(\r\n    f\"Summarize {stock_name}'s stock performance for the past week, including the latest analyst recommendations and relevant news. Provide a table with the stock price, analyst recommendations, and company news. Conclude with actionable financial advice based on the current trends, including whether to buy, sell, or hold {stock_name} stock.\",\r\n    stream=True\r\n)\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/financial_agent.py b/financial_agent.py
+--- a/financial_agent.py	(revision b795be6a307e69dc0028b63d71aca5c036576358)
++++ b/financial_agent.py	(date 1737112253963)
+@@ -71,3 +71,4 @@
+     f"Summarize {stock_name}'s stock performance for the past week, including the latest analyst recommendations and relevant news. Provide a table with the stock price, analyst recommendations, and company news. Conclude with actionable financial advice based on the current trends, including whether to buy, sell, or hold {stock_name} stock.",
+     stream=True
+ )
++
+Index: testing.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import os\r\nfrom dotenv import load_dotenv\r\n\r\n# Load the .env file\r\nload_dotenv('.env', override=True)\r\n\r\n# Check if the API key is loaded correctly\r\napi_key = os.getenv('GROQ_API_KEY')  # Change to 'groq_api_key' if using lowercase\r\n\r\nif api_key:\r\n    print(\"GROQ_API_KEY is loaded:\", api_key)\r\nelse:\r\n    print(\"GROQ_API_KEY not found. Please set the key in the .env file.\")\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/testing.py b/testing.py
+--- a/testing.py	(revision b795be6a307e69dc0028b63d71aca5c036576358)
++++ b/testing.py	(date 1737134743810)
+@@ -5,9 +5,9 @@
+ load_dotenv('.env', override=True)
+ 
+ # Check if the API key is loaded correctly
+-api_key = os.getenv('GROQ_API_KEY')  # Change to 'groq_api_key' if using lowercase
++api_key = os.getenv('API_KEY')  # Change to 'groq_api_key' if using lowercase
+ 
+ if api_key:
+-    print("GROQ_API_KEY is loaded:", api_key)
++    print("PHI_API_KEY is loaded:", api_key)
+ else:
+-    print("GROQ_API_KEY not found. Please set the key in the .env file.")
++    print("API_KEY not found. Please set the key in the .env file.")
+Index: playground.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/playground.py b/playground.py
+new file mode 100644
+--- /dev/null	(date 1737136170026)
++++ b/playground.py	(date 1737136170026)
+@@ -0,0 +1,56 @@
++from phi.agent import Agent
++from phi.model.groq import Groq
++from phi.tools.yfinance import YFinanceTools
++from phi.tools.duckduckgo import DuckDuckGo
++from dotenv import load_dotenv
++import os
++import getpass
++from phi.playground import Playground, serve_playground_app
++import phi.api
++# Load environment variables
++# Load environment variables from .env file
++load_dotenv('.env',override=True)
++
++phi.api=os.getenv('API_KEY')
++
++web_search_agent=Agent(
++    name='web_search_agent',
++    role='search the web for the reliable financial data which can be used to get useful insight',
++    model=Groq(id='llama-3.3-70b-versatile'),
++    tools=[DuckDuckGo()],
++    instructions=[
++        'Focus on high-quality, trusted financial news sources (e.g., Bloomberg, Reuters, Yahoo Finance, etc.).',
++        'Ensure all information is up-to-date, relevant, and fact-checked.',
++        'Summarize findings in a structured format, with key insights in bullet points.',
++        'Prioritize sources that provide detailed financial data (stock prices, analyst ratings, market trends, etc.).',
++        'Always include source links and the date of publication.'
++    ],
++    show_tool_calls=True,
++    markdown=True,
++)
++## Financial agent
++finance_agent=Agent(
++    name='finance_ai_agent',
++    model=Groq(id='llama-3.3-70b-versatile'),
++    tools=[YFinanceTools(stock_price=True, analyst_recommendations=True,
++                         stock_fundamentals=True,
++                         company_news=True),
++       ],
++    instructions=[
++        'Present financial data in a structured table format (e.g., stock prices, analyst ratings, news summaries).',
++        'Focus on high-quality, accurate financial data (e.g., stock performance, analyst recommendations, earnings reports).',
++        'Provide a summary of key financial trends or insights based on the data.',
++        'Offer actionable recommendations based on financial data (e.g., "Buy", "Sell", "Hold").',
++        'Ensure all data is up-to-date, referencing the most recent financial reports and news articles.',
++        'Cross-check the sources of data for consistency and accuracy.',
++    ],
++    show_tools_calls=True,
++    markdown=True,
++)
++
++
++
++app=Playground(agents=[finance_agent,web_search_agent]).get_app()
++
++if __name__=='__main__':
++    serve_playground_app('playground:app',reload=True)
+\ No newline at end of file
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"29abcfae-3b75-4c20-9cc7-c876bab0383b\" name=\"Changes\" comment=\"\">\r\n      <change afterPath=\"$PROJECT_DIR$/.env\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/.idea/.name\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/.idea/agentic ai.iml\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/.idea/misc.xml\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/.idea/modules.xml\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/.idea/vcs.xml\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/file.py\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/requirements.txt\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/testing.py\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Python Script\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"HighlightingSettingsPerFile\">\r\n    <setting file=\"file://$PROJECT_DIR$/.venv/.env\" root0=\"FORCE_HIGHLIGHTING\" />\r\n  </component>\r\n  <component name=\"ProjectColorInfo\"><![CDATA[{\r\n  \"associatedIndex\": 2\r\n}]]></component>\r\n  <component name=\"ProjectId\" id=\"2ribE6fJm4ugHqpw30Yh4mXO5HL\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\"><![CDATA[{\r\n  \"keyToString\": {\r\n    \"ASKED_SHARE_PROJECT_CONFIGURATION_FILES\": \"true\",\r\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\r\n    \"SHARE_PROJECT_CONFIGURATION_FILES\": \"true\",\r\n    \"git-widget-placeholder\": \"master\",\r\n    \"last_opened_file_path\": \"C:/Users/Ayush/PycharmProjects/PythonProject2/.venv\"\r\n  }\r\n}]]></component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"CopyFile.RECENT_KEYS\">\r\n      <recent name=\"C:\\Users\\Ayush\\PycharmProjects\\PythonProject2\\.venv\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"RunManager\">\r\n    <configuration default=\"true\" type=\"PythonConfigurationType\" factoryName=\"Python\">\r\n      <module name=\"agentic ai\" />\r\n      <option name=\"ENV_FILES\" value=\"\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <envs>\r\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\r\n      </envs>\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"false\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <option name=\"SCRIPT_NAME\" value=\"\" />\r\n      <option name=\"PARAMETERS\" value=\"\" />\r\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\r\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\r\n      <option name=\"MODULE_MODE\" value=\"false\" />\r\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\r\n      <option name=\"INPUT_FILE\" value=\"\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration default=\"true\" type=\"Tox\" factoryName=\"Tox\">\r\n      <module name=\"agentic ai\" />\r\n      <option name=\"ENV_FILES\" value=\"\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"false\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration default=\"true\" type=\"docs\" factoryName=\"Docutils task\">\r\n      <module name=\"agentic ai\" />\r\n      <option name=\"ENV_FILES\" value=\"\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"false\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <option name=\"docutils_input_file\" value=\"\" />\r\n      <option name=\"docutils_output_file\" value=\"\" />\r\n      <option name=\"docutils_params\" value=\"\" />\r\n      <option name=\"docutils_task\" value=\"\" />\r\n      <option name=\"docutils_open_in_browser\" value=\"false\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration default=\"true\" type=\"docs\" factoryName=\"Sphinx task\">\r\n      <module name=\"agentic ai\" />\r\n      <option name=\"ENV_FILES\" value=\"\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"false\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <option name=\"docutils_input_file\" value=\"\" />\r\n      <option name=\"docutils_output_file\" value=\"\" />\r\n      <option name=\"docutils_params\" value=\"\" />\r\n      <option name=\"docutils_task\" value=\"\" />\r\n      <option name=\"docutils_open_in_browser\" value=\"false\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration default=\"true\" type=\"tests\" factoryName=\"Autodetect\">\r\n      <module name=\"agentic ai\" />\r\n      <option name=\"ENV_FILES\" value=\"\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"false\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <option name=\"_new_additionalArguments\" value=\"&quot;&quot;\" />\r\n      <option name=\"_new_target\" value=\"&quot;&quot;\" />\r\n      <option name=\"_new_targetType\" value=\"&quot;PATH&quot;\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration default=\"true\" type=\"tests\" factoryName=\"Doctests\">\r\n      <module name=\"agentic ai\" />\r\n      <option name=\"ENV_FILES\" value=\"\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"false\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <option name=\"SCRIPT_NAME\" value=\"\" />\r\n      <option name=\"CLASS_NAME\" value=\"\" />\r\n      <option name=\"METHOD_NAME\" value=\"\" />\r\n      <option name=\"FOLDER_NAME\" value=\"\" />\r\n      <option name=\"TEST_TYPE\" value=\"TEST_SCRIPT\" />\r\n      <option name=\"PATTERN\" value=\"\" />\r\n      <option name=\"USE_PATTERN\" value=\"false\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n  </component>\r\n  <component name=\"SharedIndexes\">\r\n    <attachedChunks>\r\n      <set>\r\n        <option value=\"bundled-python-sdk-495700d161d3-aa17d162503b-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-243.22562.220\" />\r\n      </set>\r\n    </attachedChunks>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"29abcfae-3b75-4c20-9cc7-c876bab0383b\" name=\"Changes\" comment=\"\" />\r\n      <created>1737044727689</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1737044727689</updated>\r\n    </task>\r\n    <servers />\r\n  </component>\r\n  <component name=\"XDebuggerManager\">\r\n    <breakpoint-manager>\r\n      <breakpoints>\r\n        <line-breakpoint enabled=\"true\" suspend=\"THREAD\" type=\"python-line\">\r\n          <url>file://$PROJECT_DIR$/financial_agent.py</url>\r\n          <line>73</line>\r\n          <option name=\"timeStamp\" value=\"2\" />\r\n        </line-breakpoint>\r\n      </breakpoints>\r\n    </breakpoint-manager>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision b795be6a307e69dc0028b63d71aca5c036576358)
++++ b/.idea/workspace.xml	(date 1737136199885)
+@@ -4,18 +4,12 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="29abcfae-3b75-4c20-9cc7-c876bab0383b" name="Changes" comment="">
+-      <change afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/.idea/agentic ai.iml" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/file.py" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/testing.py" afterDir="false" />
++    <list default="true" id="29abcfae-3b75-4c20-9cc7-c876bab0383b" name="Changes" comment="first version">
++      <change afterPath="$PROJECT_DIR$/playground.py" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/financial_agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/financial_agent.py" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/testing.py" beforeDir="false" afterPath="$PROJECT_DIR$/testing.py" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -35,132 +29,30 @@
+   <component name="HighlightingSettingsPerFile">
+     <setting file="file://$PROJECT_DIR$/.venv/.env" root0="FORCE_HIGHLIGHTING" />
+   </component>
+-  <component name="ProjectColorInfo"><![CDATA[{
+-  "associatedIndex": 2
+-}]]></component>
++  <component name="ProjectColorInfo">{
++  &quot;associatedIndex&quot;: 2
++}</component>
+   <component name="ProjectId" id="2ribE6fJm4ugHqpw30Yh4mXO5HL" />
+   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+   <component name="ProjectViewState">
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent"><![CDATA[{
+-  "keyToString": {
+-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+-    "RunOnceActivity.ShowReadmeOnStart": "true",
+-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+-    "git-widget-placeholder": "master",
+-    "last_opened_file_path": "C:/Users/Ayush/PycharmProjects/PythonProject2/.venv"
++  <component name="PropertiesComponent">{
++  &quot;keyToString&quot;: {
++    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
++    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
++    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
++    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
++    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
++    &quot;last_opened_file_path&quot;: &quot;C:/Users/Ayush/PycharmProjects/PythonProject2/.venv&quot;,
++    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+   }
+-}]]></component>
++}</component>
+   <component name="RecentsManager">
+     <key name="CopyFile.RECENT_KEYS">
+       <recent name="C:\Users\Ayush\PycharmProjects\PythonProject2\.venv" />
+     </key>
+-  </component>
+-  <component name="RunManager">
+-    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+-      <module name="agentic ai" />
+-      <option name="ENV_FILES" value="" />
+-      <option name="INTERPRETER_OPTIONS" value="" />
+-      <option name="PARENT_ENVS" value="true" />
+-      <envs>
+-        <env name="PYTHONUNBUFFERED" value="1" />
+-      </envs>
+-      <option name="SDK_HOME" value="" />
+-      <option name="WORKING_DIRECTORY" value="" />
+-      <option name="IS_MODULE_SDK" value="false" />
+-      <option name="ADD_CONTENT_ROOTS" value="true" />
+-      <option name="ADD_SOURCE_ROOTS" value="true" />
+-      <option name="SCRIPT_NAME" value="" />
+-      <option name="PARAMETERS" value="" />
+-      <option name="SHOW_COMMAND_LINE" value="false" />
+-      <option name="EMULATE_TERMINAL" value="false" />
+-      <option name="MODULE_MODE" value="false" />
+-      <option name="REDIRECT_INPUT" value="false" />
+-      <option name="INPUT_FILE" value="" />
+-      <method v="2" />
+-    </configuration>
+-    <configuration default="true" type="Tox" factoryName="Tox">
+-      <module name="agentic ai" />
+-      <option name="ENV_FILES" value="" />
+-      <option name="INTERPRETER_OPTIONS" value="" />
+-      <option name="PARENT_ENVS" value="true" />
+-      <option name="SDK_HOME" value="" />
+-      <option name="WORKING_DIRECTORY" value="" />
+-      <option name="IS_MODULE_SDK" value="false" />
+-      <option name="ADD_CONTENT_ROOTS" value="true" />
+-      <option name="ADD_SOURCE_ROOTS" value="true" />
+-      <method v="2" />
+-    </configuration>
+-    <configuration default="true" type="docs" factoryName="Docutils task">
+-      <module name="agentic ai" />
+-      <option name="ENV_FILES" value="" />
+-      <option name="INTERPRETER_OPTIONS" value="" />
+-      <option name="PARENT_ENVS" value="true" />
+-      <option name="SDK_HOME" value="" />
+-      <option name="WORKING_DIRECTORY" value="" />
+-      <option name="IS_MODULE_SDK" value="false" />
+-      <option name="ADD_CONTENT_ROOTS" value="true" />
+-      <option name="ADD_SOURCE_ROOTS" value="true" />
+-      <option name="docutils_input_file" value="" />
+-      <option name="docutils_output_file" value="" />
+-      <option name="docutils_params" value="" />
+-      <option name="docutils_task" value="" />
+-      <option name="docutils_open_in_browser" value="false" />
+-      <method v="2" />
+-    </configuration>
+-    <configuration default="true" type="docs" factoryName="Sphinx task">
+-      <module name="agentic ai" />
+-      <option name="ENV_FILES" value="" />
+-      <option name="INTERPRETER_OPTIONS" value="" />
+-      <option name="PARENT_ENVS" value="true" />
+-      <option name="SDK_HOME" value="" />
+-      <option name="WORKING_DIRECTORY" value="" />
+-      <option name="IS_MODULE_SDK" value="false" />
+-      <option name="ADD_CONTENT_ROOTS" value="true" />
+-      <option name="ADD_SOURCE_ROOTS" value="true" />
+-      <option name="docutils_input_file" value="" />
+-      <option name="docutils_output_file" value="" />
+-      <option name="docutils_params" value="" />
+-      <option name="docutils_task" value="" />
+-      <option name="docutils_open_in_browser" value="false" />
+-      <method v="2" />
+-    </configuration>
+-    <configuration default="true" type="tests" factoryName="Autodetect">
+-      <module name="agentic ai" />
+-      <option name="ENV_FILES" value="" />
+-      <option name="INTERPRETER_OPTIONS" value="" />
+-      <option name="PARENT_ENVS" value="true" />
+-      <option name="SDK_HOME" value="" />
+-      <option name="WORKING_DIRECTORY" value="" />
+-      <option name="IS_MODULE_SDK" value="false" />
+-      <option name="ADD_CONTENT_ROOTS" value="true" />
+-      <option name="ADD_SOURCE_ROOTS" value="true" />
+-      <option name="_new_additionalArguments" value="&quot;&quot;" />
+-      <option name="_new_target" value="&quot;&quot;" />
+-      <option name="_new_targetType" value="&quot;PATH&quot;" />
+-      <method v="2" />
+-    </configuration>
+-    <configuration default="true" type="tests" factoryName="Doctests">
+-      <module name="agentic ai" />
+-      <option name="ENV_FILES" value="" />
+-      <option name="INTERPRETER_OPTIONS" value="" />
+-      <option name="PARENT_ENVS" value="true" />
+-      <option name="SDK_HOME" value="" />
+-      <option name="WORKING_DIRECTORY" value="" />
+-      <option name="IS_MODULE_SDK" value="false" />
+-      <option name="ADD_CONTENT_ROOTS" value="true" />
+-      <option name="ADD_SOURCE_ROOTS" value="true" />
+-      <option name="SCRIPT_NAME" value="" />
+-      <option name="CLASS_NAME" value="" />
+-      <option name="METHOD_NAME" value="" />
+-      <option name="FOLDER_NAME" value="" />
+-      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+-      <option name="PATTERN" value="" />
+-      <option name="USE_PATTERN" value="false" />
+-      <method v="2" />
+-    </configuration>
+   </component>
+   <component name="SharedIndexes">
+     <attachedChunks>
+@@ -178,17 +70,38 @@
+       <option name="presentableId" value="Default" />
+       <updated>1737044727689</updated>
+     </task>
++    <task id="LOCAL-00001" summary="first version">
++      <option name="closed" value="true" />
++      <created>1737062941502</created>
++      <option name="number" value="00001" />
++      <option name="presentableId" value="LOCAL-00001" />
++      <option name="project" value="LOCAL" />
++      <updated>1737062941504</updated>
++    </task>
++    <task id="LOCAL-00002" summary="first version">
++      <option name="closed" value="true" />
++      <created>1737062965862</created>
++      <option name="number" value="00002" />
++      <option name="presentableId" value="LOCAL-00002" />
++      <option name="project" value="LOCAL" />
++      <updated>1737062965862</updated>
++    </task>
++    <option name="localTasksCounter" value="3" />
+     <servers />
+   </component>
+-  <component name="XDebuggerManager">
+-    <breakpoint-manager>
+-      <breakpoints>
+-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+-          <url>file://$PROJECT_DIR$/financial_agent.py</url>
+-          <line>73</line>
+-          <option name="timeStamp" value="2" />
+-        </line-breakpoint>
+-      </breakpoints>
+-    </breakpoint-manager>
++  <component name="Vcs.Log.Tabs.Properties">
++    <option name="TAB_STATES">
++      <map>
++        <entry key="MAIN">
++          <value>
++            <State />
++          </value>
++        </entry>
++      </map>
++    </option>
++  </component>
++  <component name="VcsManagerConfiguration">
++    <MESSAGE value="first version" />
++    <option name="LAST_COMMIT_MESSAGE" value="first version" />
+   </component>
+ </project>
+\ No newline at end of file

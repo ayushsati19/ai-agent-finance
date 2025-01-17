@@ -1,0 +1,16 @@
+Index: .env
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>GROQ_API_KEY='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'\r\nAPI_KEY='phi-wP3cY_MAR--eq4OQQkhm4NiiO1ITK6Q3Gwu8dlWAigw'
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.env b/.env
+--- a/.env	(revision b795be6a307e69dc0028b63d71aca5c036576358)
++++ b/.env	(date 1737135848687)
+@@ -1,2 +1,2 @@
+ GROQ_API_KEY='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'
+-API_KEY='phi-wP3cY_MAR--eq4OQQkhm4NiiO1ITK6Q3Gwu8dlWAigw'
+\ No newline at end of file
++API_KEY='phi-lcB6Qr7JLMM_a_uGx-uQNGTyEpeYnrEaOcmwYW691ks'
+\ No newline at end of file

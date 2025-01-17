@@ -5,9 +5,9 @@ from dotenv import load_dotenv
 load_dotenv('.env', override=True)
 
 # Check if the API key is loaded correctly
-api_key = os.getenv('GROQ_API_KEY')  # Change to 'groq_api_key' if using lowercase
+api_key = os.getenv('API_KEY')  # Change to 'groq_api_key' if using lowercase
 
 if api_key:
-    print("GROQ_API_KEY is loaded:", api_key)
+    print("PHI_API_KEY is loaded:", api_key)
 else:
-    print("GROQ_API_KEY not found. Please set the key in the .env file.")
+    print("API_KEY not found. Please set the key in the .env file.")
