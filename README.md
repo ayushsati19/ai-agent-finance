@@ -132,5 +132,5 @@ This project is licensed under the MIT License. See the LICENSE file for details
 
 ---
 
-For questions or support, please contact [your email/contact info].
+For questions or support, please contact [ayushsati19@gmail.com].
 
