@@ -68,7 +68,7 @@ stock_name = input("Enter the stock ticker symbol you want to analyze (e.g., TSL
 
 # Use the inputted stock name in the agent's response
 multi_ai_agent.print_response(
-    f"Summarize {stock_name}'s stock performance for the past week, including the latest analyst recommendations and relevant news. Provide a table with the stock price, analyst recommendations, and company news. Conclude with actionable financial advice based on the current trends, including whether to buy, sell, or hold {stock_name} stock.",
+    f"Summarize {stock_name}'s stock performance for the past week, including the latest analyst recommendations and relevant news. Provide a table with the stock price, analyst recommendations, and company news. Conclude with actionable financial advice based on the current trends, including whether to buy, sell, or hold the stock.",
     stream=True
 )
 
